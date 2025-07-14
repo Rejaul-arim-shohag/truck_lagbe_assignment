@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type Trip = {
   loadLocation: string;
@@ -15,7 +15,7 @@ type TripContextType = {
 
 const TripContext = createContext<TripContextType | undefined>(undefined);
 
-export const TripProvider: React.FC<{ children: React.ReactNode }> = ({
+export const TripProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [trips, setTrips] = useState<Trip[]>([]);
@@ -23,8 +23,8 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({
   const addTrip = (trip: Trip) => {
     setTrips(prev => [...prev, trip]);
   };
-   const removeTrip = (index: number) =>
-     setTrips(prev => prev.filter((_, i) => i !== index));
+  const removeTrip = (index: number) =>
+    setTrips(prev => prev.filter((_, i) => i !== index));
   const resetTrips = () => {
     setTrips([]);
   };
