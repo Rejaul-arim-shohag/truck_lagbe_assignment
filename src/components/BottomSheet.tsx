@@ -1,12 +1,4 @@
-
-
-import React, {
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-  ForwardedRef,
-} from 'react';
-import { View } from 'react-native';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import RBSheet from 'react-native-raw-bottom-sheet';
 
 export type RBSheetRef = {
@@ -14,11 +6,13 @@ export type RBSheetRef = {
   close: () => void;
 };
 
-type BottomSheetProps = React.ComponentPropsWithoutRef<typeof RBSheet>;
+type BottomSheetProps = {
+  children: React.ReactNode;
+};
 
 const BottomSheet = forwardRef<RBSheetRef, BottomSheetProps>(
-  (props, ref: ForwardedRef<RBSheetRef>) => {
-    const sheetRef = useRef<RBSheetRef>(null);
+  ({ children }, ref) => {
+    const sheetRef = useRef<any>(null);
 
     useImperativeHandle(ref, () => ({
       open: () => sheetRef.current?.open(),
@@ -26,9 +20,18 @@ const BottomSheet = forwardRef<RBSheetRef, BottomSheetProps>(
     }));
 
     return (
-      <View style={{ flex: 1 }}>
-        <RBSheet ref={sheetRef} {...props} />
-      </View>
+      <RBSheet
+        ref={sheetRef}
+        height={350}
+        openDuration={250}
+        customStyles={{
+          container: {
+            padding: 20,
+          },
+        }}
+      >
+        {children}
+      </RBSheet>
     );
   },
 );

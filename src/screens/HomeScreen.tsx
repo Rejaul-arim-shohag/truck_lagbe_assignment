@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,23 +7,59 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
+import BottomSheet, { RBSheetRef } from '../components/BottomSheet';
 import SettingIcon from '../assets/icons/SettingIcon';
+import ArrowRight from '../assets/icons/AroowRight';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Platform } from 'react-native';
+
+const LOCATIONS = ['Dhaka', 'Chittagong', 'Sylhet', 'Khulna', 'Rajshahi'];
 
 const HomeScreen = () => {
   const [loadLocation, setLoadLocation] = useState('');
   const [unloadLocation, setUnloadLocation] = useState('');
   const [dateTime, setDateTime] = useState('');
+  const [showPicker, setShowPicker] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [activeInput, setActiveInput] = useState<'load' | 'unload' | null>(
+    null,
+  );
 
-  const handleCreateTrip = () => {
-    console.log('Creating trip:', { loadLocation, unloadLocation, dateTime });
+  const bottomSheetRef = useRef<RBSheetRef>(null);
+
+  const handleSelectLocation = (location: string) => {
+    if (activeInput === 'load') {
+      setLoadLocation(location);
+    } else if (activeInput === 'unload') {
+      setUnloadLocation(location);
+    }
+    bottomSheetRef.current?.close();
+  };
+
+  const showDatePicker = () => {
+    setShowPicker(true);
+  };
+
+
+  const openLocationPicker = (type: 'load' | 'unload') => {
+    setActiveInput(type);
+    bottomSheetRef.current?.open();
+  };
+
+  const onChange = (event: any, selected: Date | undefined) => {
+    setShowPicker(Platform.OS === 'ios'); // On Android, auto close
+    if (selected) {
+      setSelectedDate(selected);
+      const formatted =
+        selected.toLocaleDateString() +
+        ' · ' +
+        selected.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      setDateTime(formatted);
+    }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <View style={styles.header}>
-        <Text style={styles.title}>Trip Planner</Text>
-        <SettingIcon width={24} height={24} color="#171212" />
-      </View> */}
       <View style={styles.header}>
         <Text style={styles.title}>Trip Planner</Text>
         <View style={styles.iconWrapper}>
@@ -33,38 +69,77 @@ const HomeScreen = () => {
 
       <Text style={styles.subtitle}>Design Your Trip</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Load Location"
-        placeholderTextColor="#A18B8B"
-        value={loadLocation}
-        onChangeText={setLoadLocation}
-      />
+      <TouchableOpacity onPress={() => openLocationPicker('load')}>
+        <TextInput
+          style={styles.input}
+          placeholder="Load Location"
+          placeholderTextColor="#A18B8B"
+          value={loadLocation}
+          editable={false}
+          pointerEvents="none"
+        />
+      </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Unload Location"
-        placeholderTextColor="#A18B8B"
-        value={unloadLocation}
-        onChangeText={setUnloadLocation}
-      />
+      <TouchableOpacity onPress={() => openLocationPicker('unload')}>
+        <TextInput
+          style={styles.input}
+          placeholder="Unload Location"
+          placeholderTextColor="#A18B8B"
+          value={unloadLocation}
+          editable={false}
+          pointerEvents="none"
+        />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={showDatePicker}>
+        <TextInput
+          style={styles.input}
+          placeholder="Date & Time"
+          placeholderTextColor="#A18B8B"
+          value={dateTime}
+          editable={false}
+          pointerEvents="none"
+        />
+      </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Date & Time"
-        placeholderTextColor="#A18B8B"
-        value={dateTime}
-        onChangeText={setDateTime}
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleCreateTrip}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => console.log('Create Trip')}
+      >
         <Text style={styles.buttonText}>Create Trip</Text>
       </TouchableOpacity>
+
+      {/* Reusable Bottom Sheet */}
+      <BottomSheet ref={bottomSheetRef}>
+        <Text style={styles.sheetTitle}>
+          Select {activeInput === 'load' ? 'Load' : 'Unload'} Location
+        </Text>
+        {LOCATIONS.map(loc => (
+          <TouchableOpacity
+            key={loc}
+            style={styles.locationItem}
+            onPress={() => handleSelectLocation(loc)}
+          >
+            <Text style={styles.locationText}>{loc}</Text>
+            <ArrowRight size={24} color="#171212" />
+            {/* <Text style={styles.arrow}>→</Text> */}
+          </TouchableOpacity>
+        ))}
+      </BottomSheet>
+
+      {showPicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display="default"
+          onChange={onChange}
+        />
+      )}
     </SafeAreaView>
   );
 };
 
 export default HomeScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -118,5 +193,26 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+
+  sheetTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 15,
+  },
+  locationItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: '#EAEAEA',
+  },
+  locationText: {
+    fontSize: 16,
+    color: '#171212',
+  },
+  arrow: {
+    fontSize: 16,
+    color: '#171212',
   },
 });
