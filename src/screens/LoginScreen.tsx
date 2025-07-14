@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   SafeAreaView,
@@ -8,16 +8,12 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import BottomSheet from '../components/BottomSheet';
 import { useAuth } from '../Auth/AuthContext';
 
 function LoginScreen() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
-  const refRBSheet = useRef<any>(null);
 
   const handleLogin = async () => {
     if (email.trim() === '' || password.trim() === '') {
@@ -36,13 +32,6 @@ function LoginScreen() {
       console.error('Login error:', error);
     }
   };
-
-  // const handleLogin = () => {
-  //   // refRBSheet.current?.open();
-  //   // console.log('Login Pressed', { email, password });
-  //   navigation.navigate('Home');
-  //   // onPress={() => navigation.replace('Home')}
-  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -68,8 +57,6 @@ function LoginScreen() {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-
-      <BottomSheet ref={refRBSheet} />
     </SafeAreaView>
   );
 }

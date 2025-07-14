@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import BottomSheet, { RBSheetRef } from '../components/BottomSheet';
 import SettingIcon from '../assets/icons/SettingIcon';
 import ArrowRight from '../assets/icons/AroowRight';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
+import { useTrip } from '../context/TripContext';
 
 const LOCATIONS = ['Dhaka', 'Chittagong', 'Sylhet', 'Khulna', 'Rajshahi'];
 
@@ -24,6 +26,7 @@ const HomeScreen = () => {
   const [activeInput, setActiveInput] = useState<'load' | 'unload' | null>(
     null,
   );
+  const { addTrip } = useTrip();
 
   const bottomSheetRef = useRef<RBSheetRef>(null);
 
@@ -40,7 +43,6 @@ const HomeScreen = () => {
     setShowPicker(true);
   };
 
-
   const openLocationPicker = (type: 'load' | 'unload') => {
     setActiveInput(type);
     bottomSheetRef.current?.open();
@@ -56,6 +58,30 @@ const HomeScreen = () => {
         selected.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       setDateTime(formatted);
     }
+  };
+
+  const handleCreateTrip = () => {
+    if (!loadLocation || !unloadLocation || !dateTime) {
+      Alert.alert(
+        'Incomplete Trip Info',
+        'Please select Load Location, Unload Location, and Date & Time before creating a trip.',
+        [{ text: 'OK' }],
+        { cancelable: true },
+      );
+      return;
+    }
+
+    addTrip({ loadLocation, unloadLocation, dateTime });
+    setLoadLocation('');
+    setUnloadLocation('');
+    setDateTime('');
+    Alert.alert(
+      'Success!',
+      'Your trip has been created successfully.',
+      [{ text: 'OK' }],
+      { cancelable: true },
+    );
+
   };
 
   return (
@@ -101,10 +127,7 @@ const HomeScreen = () => {
         />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => console.log('Create Trip')}
-      >
+      <TouchableOpacity style={styles.button} onPress={handleCreateTrip}>
         <Text style={styles.buttonText}>Create Trip</Text>
       </TouchableOpacity>
 

@@ -8,57 +8,48 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-
-const trips = [
-  {
-    id: '1',
-    date: 'July 12, 2024 · 10:00 AM',
-    image: require('../assets/images/pickup1.png'),
-  },
-  {
-    id: '2',
-    date: 'July 12, 2024 · 10:00 AM',
-    image: require('../assets/images/pickup2.png'),
-  },
-  {
-    id: '3',
-    date: 'July 12, 2024 · 10:00 AM',
-    image: require('../assets/images/pickup3.png'),
-  },
-];
+import { useTrip } from '../context/TripContext';
 
 const TripsScreen = () => {
+  const { trips } = useTrip();
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Your Trips</Text>
 
-      <FlatList
-        data={trips}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.tripItem}>
-            <View style={styles.tripInfo}>
-              <View style={styles.routeWrapper}>
-                <Text style={styles.route}>Load</Text>
-                <Text style={styles.arrow}>→</Text>
-                <Text style={styles.route}>Unload</Text>
+      {trips.length === 0 ? (
+        <Text style={styles.noTrips}>No trips found. Create a trip first!</Text>
+      ) : (
+        <FlatList
+          data={trips}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.list}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.tripItem}>
+              <View style={styles.tripInfo}>
+                <View style={styles.routeWrapper}>
+                  <Text style={styles.route}>{item.loadLocation}</Text>
+                  <Text style={styles.arrow}>→</Text>
+                  <Text style={styles.route}>{item.unloadLocation}</Text>
+                </View>
+
+                <Text style={styles.date}>{item.dateTime}</Text>
               </View>
 
-              <Text style={styles.date}>{item.date}</Text>
-            </View>
-
-            <Image
-              source={item.image}
-              style={styles.image}
-              resizeMode="cover"
-            />
-          </TouchableOpacity>
-        )}
-      />
+              <Image
+                source={require('../assets/images/pickup1.png')}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 };
+
+export default TripsScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -113,6 +104,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#171212',
   },
+  noTrips: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 50,
+  },
 });
 
-export default TripsScreen;

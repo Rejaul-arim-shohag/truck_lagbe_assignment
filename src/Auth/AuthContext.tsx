@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTrip } from '../context/TripContext';
 
 type AuthContextType = {
   user: { email: string } | null;
@@ -13,6 +14,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<{ email: string } | null>(null);
+  const { resetTrips } = useTrip();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -33,6 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = async () => {
     await AsyncStorage.removeItem('user');
     setUser(null);
+    resetTrips();
   };
 
   return (
