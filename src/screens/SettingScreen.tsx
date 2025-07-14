@@ -15,7 +15,7 @@ const SettingsScreen = () => {
       <Text style={styles.header}>Settings</Text>
 
       <Image
-        source={require('../assets/images/avatar.png')} // Replace with your actual avatar image
+        source={require('../assets/images/avatar.png')}
         style={styles.avatar}
       />
 

@@ -9,6 +9,7 @@ type Trip = {
 type TripContextType = {
   trips: Trip[];
   addTrip: (trip: Trip) => void;
+  removeTrip: (index: number) => void;
   resetTrips: () => void;
 };
 
@@ -22,12 +23,14 @@ export const TripProvider: React.FC<{ children: React.ReactNode }> = ({
   const addTrip = (trip: Trip) => {
     setTrips(prev => [...prev, trip]);
   };
+   const removeTrip = (index: number) =>
+     setTrips(prev => prev.filter((_, i) => i !== index));
   const resetTrips = () => {
     setTrips([]);
   };
 
   return (
-    <TripContext.Provider value={{ trips, addTrip, resetTrips }}>
+    <TripContext.Provider value={{ trips, addTrip, resetTrips, removeTrip }}>
       {children}
     </TripContext.Provider>
   );

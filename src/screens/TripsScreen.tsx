@@ -12,6 +12,7 @@ import { useTrip } from '../context/TripContext';
 
 const TripsScreen = () => {
   const { trips } = useTrip();
+    const { removeTrip } = useTrip();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,8 +25,8 @@ const TripsScreen = () => {
           data={trips}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={styles.list}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.tripItem}>
+          renderItem={({ index, item }) => (
+            <View style={styles.tripItem}>
               <View style={styles.tripInfo}>
                 <View style={styles.routeWrapper}>
                   <Text style={styles.route}>{item.loadLocation}</Text>
@@ -41,7 +42,16 @@ const TripsScreen = () => {
                 style={styles.image}
                 resizeMode="cover"
               />
-            </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => removeTrip(index)}
+                style={styles.deleteBtn}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                activeOpacity={0.6}
+              >
+                <Text style={styles.deleteText}>×</Text>
+              </TouchableOpacity>
+            </View>
           )}
         />
       )}
@@ -69,6 +79,21 @@ const styles = StyleSheet.create({
   },
   tripInfo: {
     flex: 1,
+  },
+  deleteBtn: {
+    backgroundColor: '#ee6055', // soft red
+    borderRadius: 16,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10, // spacing from content
+  },
+  deleteText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    lineHeight: 18,
   },
 
   routeWrapper: {
