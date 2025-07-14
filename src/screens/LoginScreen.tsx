@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import {
+  Alert,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -9,19 +10,39 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BottomSheet from '../components/BottomSheet';
+import { useAuth } from '../Auth/AuthContext';
 
 function LoginScreen() {
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
   const refRBSheet = useRef<any>(null);
 
-  const handleLogin = () => {
-    // refRBSheet.current?.open();
-    // console.log('Login Pressed', { email, password });
-    navigation.navigate('Home');
-    // onPress={() => navigation.replace('Home')}
+  const handleLogin = async () => {
+    if (email.trim() === '' || password.trim() === '') {
+      Alert.alert(
+        'Missing Credentials',
+        'Please enter both your email and password to continue.',
+        [{ text: 'OK', onPress: () => console.log('OK pressed') }],
+        { cancelable: true },
+      );
+      return;
+    }
+
+    try {
+      await login(email, password);
+    } catch (error) {
+      console.error('Login error:', error);
+    }
   };
+
+  // const handleLogin = () => {
+  //   // refRBSheet.current?.open();
+  //   // console.log('Login Pressed', { email, password });
+  //   navigation.navigate('Home');
+  //   // onPress={() => navigation.replace('Home')}
+  // };
 
   return (
     <SafeAreaView style={styles.container}>

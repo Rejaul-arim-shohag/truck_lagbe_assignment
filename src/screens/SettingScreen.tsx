@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
+import { useAuth } from '../Auth/AuthContext';
 
 const SettingsScreen = () => {
+  const { logout } = useAuth();
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Settings</Text>
@@ -20,7 +22,7 @@ const SettingsScreen = () => {
       <Text style={styles.name}>Sophia Clark</Text>
       <Text style={styles.email}>sophia.clark@email.com</Text>
 
-      <TouchableOpacity style={styles.logoutButton}>
+      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
     </SafeAreaView>
