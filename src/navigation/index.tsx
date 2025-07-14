@@ -10,6 +10,9 @@ import TripsScreen from '../screens/TripsScreen';
 import SettingsScreen from '../screens/SettingScreen';
 import { useAuth } from '../Auth/AuthContext';
 import PickUpIcon from '../assets/icons/PicupIcon';
+import HomeIconFill from '../assets/icons/HomeIconFill'
+import TripIconHiglight from '../assets/icons/TripIcon';
+import SettingsIconFill from '../assets/icons/SettingIconFill';
 
 const SCREENS = {
   LOGIN: 'Login',
@@ -20,6 +23,7 @@ const SCREENS = {
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
 
 export default function StackNavigation() {
   const { user } = useAuth();
@@ -38,6 +42,7 @@ export default function StackNavigation() {
   );
 }
 
+
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -47,11 +52,23 @@ function TabNavigator() {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars, react/no-unstable-nested-components
         tabBarIcon: ({ focused, color, size }) => {
           if (route.name === SCREENS.HOME) {
-            return <HomeIcon width={20} height={20} color={color} />;
+            return focused ? (
+              <HomeIconFill color={color} />
+            ) : (
+              <HomeIcon color={color} />
+            );
           } else if (route.name === SCREENS.TRIPS) {
-            return <PickUpIcon width={24} height={24} color={color} />;
+            return focused ? (
+              <TripIconHiglight color={color} />
+            ) : (
+              <PickUpIcon color={color} />
+            );
           } else if (route.name === SCREENS.SETTINGS) {
-            return <SettingsIcon width={24} height={24} color={color} />;
+            return focused ? (
+              <SettingsIconFill />
+            ) : (
+              <SettingsIcon color={color} />
+            );
           }
         },
         tabBarActiveTintColor: 'red',
@@ -65,6 +82,14 @@ function TabNavigator() {
           title: 'Home',
           tabBarActiveTintColor: '#171212',
           tabBarInactiveTintColor: '#876363',
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginLeft: 0,
+          },
+          tabBarIconStyle: {
+            marginLeft: 8,
+
+          },
         }}
       />
       <Tab.Screen
@@ -74,6 +99,13 @@ function TabNavigator() {
           title: 'Trips',
           tabBarActiveTintColor: '#171212',
           tabBarInactiveTintColor: '#876363',
+          tabBarLabelStyle: {
+            fontSize: 12,
+          },
+          tabBarIconStyle: {
+            marginLeft: 6,
+
+          },
         }}
       />
       <Tab.Screen
@@ -83,6 +115,10 @@ function TabNavigator() {
           title: 'Settings',
           tabBarActiveTintColor: '#171212',
           tabBarInactiveTintColor: '#876363',
+          tabBarLabelStyle: {
+            fontSize: 12,
+          },
+
         }}
       />
     </Tab.Navigator>
